@@ -27,7 +27,8 @@ users.post("/", async (req, res)=>{
     const newUser = req.body
     try{
         await usersModel.insertOne(newUser)
-        res.send("User Created Successfully")    
+        const token = jwt.sign(newUser, "sagar@1997", {expiresIn: "15m"})
+        res.status(200).json({token})  
     }
     catch(e){
         console.log(e)
