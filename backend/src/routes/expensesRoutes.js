@@ -2,6 +2,7 @@ const express = require("express")
 const expensesViewModel = require("../models/expensesViewModel")
 const expensesModel = require("../models/expensesModel")
 const authMiddleware = require("../middlewares/authMiddleware")
+const categoriesModel = require("../models/categoriesModel")
 const expenses = express.Router()
 
 // Last 10 Expenses
@@ -12,18 +13,33 @@ expenses.get("/", authMiddleware, async (req, res)=>{
     res.send(foundExpenses)
 })
 
-expenses.post("/", async (req, res)=>{
-    const newExpense = req.body
+expenses.post("/", authMiddleware, async (req, res)=>{
     try {
-        await expensesModel.insertOne(newExpense)
-        res.status(201).json({message: "Expense Created!"})
+        const { description, amount, date, categoryTitle } = req.body;
+        const { id: userId } = req.tokenData;
+        if (!categoryTitle) {
+            return res.status(400).json({ message: "Category title is required." });
+        }
+        // Check if category exists for this user
+        let category = await categoriesModel.findOne({ title: categoryTitle, userId });
+        if (!category) {
+            // Create new category
+            category = await categoriesModel.create({ title: categoryTitle, userId });
+        }
+        // Create the expense
+        await expensesModel.create({
+            description,
+            amount,
+            date,
+            userId,
+            categoryId: category._id
+        });
+        res.status(201).json({message: "Expense Created!"});
     }
     catch(e){
         console.log(e)
         res.status(500).json({message: "Error at server-side."})
     }
-    
-    
 })
 
 expenses.get("/:from/:to/:categoryId", async (req, res)=>{

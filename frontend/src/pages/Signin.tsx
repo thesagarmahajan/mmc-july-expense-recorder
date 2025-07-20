@@ -21,7 +21,7 @@ export function Signin() {
 
   // Redirect to signup page
   function handleSignUpRedirect() {
-    navigate("/signup");
+    navigate("/");
   }
 
   // Handle form submission
@@ -86,12 +86,12 @@ export function Signin() {
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  <a
+                  {/* <a
                     href="#"
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
                     Forgot your password?
-                  </a>
+                  </a> */}
                 </div>
                 <Input
                   id="password"
@@ -101,7 +101,7 @@ export function Signin() {
                 />
               </div>
             </div>
-            <CardFooter className="flex-col gap-2">
+            <CardFooter className="flex-col gap-2 mt-6">
               <Button type="submit" className="w-full">
                 Login
               </Button>
