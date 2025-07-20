@@ -43,55 +43,51 @@ export function Signup() {
 
             localStorage.setItem("token", data.token);
 
-            console.log("User created successfully:", data);
-
             // Redirect to dashboard page or show success message
             navigate("/dashboard");
         } catch (err) {
-            console.error("Signup failed:", err);
             // You could show an error toast or message here
         }
     }
 
-
     return (
-        <div className="h-screen flex justify-center items-center">
-            <Card className="w-full max-w-sm">
-                <CardHeader>
-                    <CardTitle>Create your account</CardTitle>
-                    <CardDescription>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 to-muted px-4">
+            <Card className="w-full max-w-sm shadow-xl animate-fade-in">
+                <CardHeader className="items-center">
+                    {/* SVG Money Icon */}
+                    <svg className="text-primary mb-2" width="36" height="36" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="currentColor" fillOpacity="0.1"/><path d="M7 10.5V9.75C7 8.50736 8.00736 7.5 9.25 7.5H14.75C15.9926 7.5 17 8.50736 17 9.75V10.5M7 10.5H17M7 10.5V14.25C7 15.4926 8.00736 16.5 9.25 16.5H14.75C15.9926 16.5 17 15.4926 17 14.25V10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    <CardTitle className="text-2xl font-bold">Create your account</CardTitle>
+                    <CardDescription className="text-center">
                         Enter your email and password below to create your account
                     </CardDescription>
                     <CardAction>
-                        <Button variant="link" onClick={handleSignInRedirect}>Sign In</Button>
+                        <Button variant="link" onClick={handleSignInRedirect} className="text-xs px-0">Sign In</Button>
                     </CardAction>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={handleSubmit}>
-                        <div className="flex flex-col gap-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    placeholder="m@example.com"
-                                    required
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    required
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
-                            </div>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="grid gap-2">
+                            <Label htmlFor="email">Email</Label>
+                            <Input
+                                id="email"
+                                type="email"
+                                placeholder="m@example.com"
+                                required
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="focus:ring-2 focus:ring-primary"
+                            />
                         </div>
-
-                        {/* Submit button moved inside form */}
-                        <CardFooter className="flex-col gap-2 mt-6">
+                        <div className="grid gap-2">
+                            <Label htmlFor="password">Password</Label>
+                            <Input
+                                id="password"
+                                type="password"
+                                required
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="focus:ring-2 focus:ring-primary"
+                            />
+                        </div>
+                        <CardFooter className="flex-col gap-2 mt-4 p-0">
                             <Button type="submit" className="w-full">
                                 Sign Up
                             </Button>
@@ -100,6 +96,5 @@ export function Signup() {
                 </CardContent>
             </Card>
         </div>
-
     )
 }

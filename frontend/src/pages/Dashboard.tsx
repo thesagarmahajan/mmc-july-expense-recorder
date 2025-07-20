@@ -134,31 +134,48 @@ export default function Dashboard() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/signin");
+  };
+
   return (
-    <div className="flex justify-center items-start min-h-screen bg-muted py-10">
-      <Card className="w-full max-w-2xl">
-        <CardHeader className="flex flex-row items-center justify-between pb-4">
-          <CardTitle className="text-2xl">Expenses</CardTitle>
+    <div className="min-h-screen bg-muted flex flex-col items-center py-10">
+      <header className="w-full max-w-2xl px-4 py-4 mb-8 bg-card shadow-md rounded-lg flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-primary flex items-center gap-2">
+          {/* SVG Money Icon */}
+          <svg className="text-primary" width="32" height="32" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="currentColor" fillOpacity="0.1"/><path d="M7 10.5V9.75C7 8.50736 8.00736 7.5 9.25 7.5H14.75C15.9926 7.5 17 8.50736 17 9.75V10.5M7 10.5H17M7 10.5V14.25C7 15.4926 8.00736 16.5 9.25 16.5H14.75C15.9926 16.5 17 15.4926 17 14.25V10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          Expense Tracker
+        </h1>
+        <div className="flex gap-3">
           <Button onClick={() => navigate("/add-expense")}>Add Expense</Button>
+          <Button variant="outline" onClick={handleLogout}>Logout</Button>
+        </div>
+      </header>
+
+      <Card className="w-full max-w-2xl">
+        <CardHeader className="flex flex-col items-start pb-4">
+          <CardTitle className="text-2xl">Your Expenses</CardTitle>
+          <p className="text-muted-foreground text-sm">View and manage your recorded expenses.</p>
         </CardHeader>
         <CardContent>
           {/* Filter Controls */}
           <form
             onSubmit={handleFilter}
-            className="flex flex-wrap gap-4 items-end mb-6"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-end mb-6 p-4 border rounded-lg bg-background shadow-inner"
           >
-            <div className="flex flex-col gap-1 w-36">
-              <Label htmlFor="from">From</Label>
-              <Input id="from" type="date" value={from} onChange={e => setFrom(e.target.value)} required />
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="from" className="text-sm">From</Label>
+              <Input id="from" type="date" value={from} onChange={e => setFrom(e.target.value)} required className="h-9 text-base" />
             </div>
-            <div className="flex flex-col gap-1 w-36">
-              <Label htmlFor="to">To</Label>
-              <Input id="to" type="date" value={to} onChange={e => setTo(e.target.value)} required />
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="to" className="text-sm">To</Label>
+              <Input id="to" type="date" value={to} onChange={e => setTo(e.target.value)} required className="h-9 text-base" />
             </div>
-            <div className="flex flex-col gap-1 w-44">
-              <Label htmlFor="category">Category</Label>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="category" className="text-sm">Category</Label>
               <Select value={categoryId} onValueChange={setCategoryId}>
-                <SelectTrigger id="category" className="w-full">
+                <SelectTrigger id="category" className="w-full h-9 text-base">
                   <SelectValue placeholder="All" />
                 </SelectTrigger>
                 <SelectContent>
@@ -169,32 +186,35 @@ export default function Dashboard() {
                 </SelectContent>
               </Select>
             </div>
-            <Button type="submit" className="h-9">Filter</Button>
+            <Button type="submit" className="h-9 w-full sm:col-span-2 md:col-span-1">Apply Filters</Button>
           </form>
 
-          {loading && <p className="text-muted-foreground">Loading...</p>}
-          {error && <p className="text-destructive mb-4">{error}</p>}
+          {loading && <p className="text-muted-foreground text-center py-8">Loading expenses...</p>}
+          {error && <p className="text-destructive text-center py-8">{error}</p>}
           {!loading && !error && (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {expenses.length === 0 ? (
-                <div className="text-muted-foreground text-center py-8">No expenses found.</div>
+                <div className="text-muted-foreground text-center py-10 border rounded-lg bg-card/50">
+                  <p className="mb-2">No expenses found for the selected criteria.</p>
+                  <p>Try adjusting your filters or add a new expense!</p>
+                </div>
               ) : (
                 expenses.map((expense) => (
                   <div
                     key={expense._id}
-                    className="flex items-center justify-between bg-card/70 border rounded-lg px-4 py-3 shadow-sm hover:bg-accent transition-colors"
+                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-card/70 border rounded-lg px-5 py-4 shadow-sm hover:bg-accent hover:shadow-md transition-all duration-200"
                   >
-                    <div className="flex flex-col">
-                      <span className="font-medium text-base">{expense.description || "No description"}</span>
+                    <div className="flex flex-col mb-2 sm:mb-0">
+                      <span className="font-semibold text-lg text-foreground">{expense.description || "No description"}</span>
                       <span className="text-sm text-muted-foreground">
-                        ₹{expense.amount} on {new Date(expense.date).toLocaleDateString()} {expense.categoryTitle ? `(${expense.categoryTitle})` : ""}
+                        <span className="font-medium text-base">₹{expense.amount}</span> on {new Date(expense.date).toLocaleDateString()}{expense.categoryTitle ? ` • ${expense.categoryTitle}` : ""}
                       </span>
                     </div>
                     <Button
                       variant="destructive"
                       size="sm"
                       onClick={() => handleDelete(expense._id)}
-                      className="ml-4"
+                      className="mt-2 sm:mt-0 ml-0 sm:ml-4"
                       title="Delete expense"
                     >
                       Delete

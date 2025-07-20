@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ChevronLeft } from "lucide-react"; // Import for back button icon
 
 interface Category {
   _id: string;
@@ -32,7 +33,7 @@ export default function AddExpense() {
           return;
         }
         // Decode userId from token (assuming JWT)
-        const payload = JSON.parse(atob(token.split(".")[1]));
+        const payload = JSON.parse(atob(token.split("." )[1]));
         const userId = payload.id;
         const res = await fetch(`http://localhost:8888/categories/${userId}`, {
           headers: {
@@ -85,47 +86,59 @@ export default function AddExpense() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-muted py-10">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl">Add New Expense</CardTitle>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-gray-900 dark:to-black py-10 px-4">
+      <Card className="w-full max-w-md p-6 shadow-2xl rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+        <CardHeader className="flex flex-row items-center justify-between pb-6">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/dashboard")}
+            className="-ml-2"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </Button>
+          <CardTitle className="text-3xl font-bold text-center flex-grow">Add New Expense</CardTitle>
+          <div className="w-10"></div> {/* Placeholder to balance title */}
         </CardHeader>
         <CardContent>
-          {loading && <p className="text-muted-foreground">Loading categories...</p>}
-          {error && <p className="text-destructive mb-4">{error}</p>}
+          {loading && <p className="text-muted-foreground text-center py-8">Loading categories...</p>}
+          {error && <p className="text-destructive text-center mb-4">{error}</p>}
           {!loading && (
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="flex flex-col gap-1">
-                <Label htmlFor="description">Description</Label>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="description" className="font-semibold">Description</Label>
                 <Input
                   id="description"
                   type="text"
                   value={description}
                   onChange={e => setDescription(e.target.value)}
                   required
-                  placeholder="Enter expense description"
+                  placeholder="e.g., Groceries, Rent, Utilities"
+                  className="focus:ring-2 focus:ring-primary h-11 text-base"
                 />
               </div>
-              <div className="flex flex-col gap-1">
-                <Label htmlFor="amount">Amount</Label>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="amount" className="font-semibold">Amount</Label>
                 <Input
                   id="amount"
                   type="number"
                   value={amount}
                   onChange={e => setAmount(e.target.value)}
                   required
-                  placeholder="Enter amount"
+                  placeholder="e.g., 500.00"
+                  className="focus:ring-2 focus:ring-primary h-11 text-base"
                 />
               </div>
-              <div className="flex flex-col gap-1">
-                <Label htmlFor="category">Category</Label>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="category" className="font-semibold">Category</Label>
                 <Input
                   id="category"
                   list="categories-list"
                   value={categoryTitle}
                   onChange={e => setCategoryTitle(e.target.value)}
                   required
-                  placeholder="Type or select category"
+                  placeholder="Type or select a category"
+                  className="focus:ring-2 focus:ring-primary h-11 text-base"
                 />
                 <datalist id="categories-list">
                   {categories.map(cat => (
@@ -133,17 +146,18 @@ export default function AddExpense() {
                   ))}
                 </datalist>
               </div>
-              <div className="flex flex-col gap-1">
-                <Label htmlFor="date">Date</Label>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="date" className="font-semibold">Date</Label>
                 <Input
                   id="date"
                   type="date"
                   value={date}
                   onChange={e => setDate(e.target.value)}
                   required
+                  className="focus:ring-2 focus:ring-primary h-11 text-base"
                 />
               </div>
-              <Button type="submit" className="w-full">Add Expense</Button>
+              <Button type="submit" className="w-full h-11 text-lg font-bold shadow-md hover:shadow-lg transition-shadow duration-200">Add Expense</Button>
             </form>
           )}
         </CardContent>
