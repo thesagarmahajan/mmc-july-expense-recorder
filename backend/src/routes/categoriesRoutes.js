@@ -1,11 +1,12 @@
 const express = require("express")
 const categoriesModel = require("../models/categoriesModel")
+const mongoose = require("mongoose")
 const categories = express.Router()
 
 categories.get("/:userId", async (req, res)=>{
     const {userId} = req.params
     try {
-        const foundCategories = await categoriesModel.find({userId})
+        const foundCategories = await categoriesModel.find({userId: new mongoose.Types.ObjectId(userId)})
         res.status(200).json(foundCategories)
     }
     catch(e){

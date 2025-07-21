@@ -19,16 +19,20 @@ users.post("/login", async (req, res)=>{
         name: foundUser[0].name
     }
 
-    const token = jwt.sign(userData, "sagar@1997", {expiresIn: "15m"})
+    const token = jwt.sign(userData, "sagar@1997", {expiresIn: "1h"}) // Increased expiry to 1 hour
     res.status(200).json({token})
 })
 
 users.post("/", async (req, res)=>{
     const newUser = req.body
     try{
-        await usersModel.insertOne(newUser)
-        const token = jwt.sign(newUser, "sagar@1997", {expiresIn: "15m"})
-        res.status(200).json({token})  
+        const createdUser = await usersModel.create(newUser) // Use .create() to get the created document
+        const userData = {
+            id: createdUser._id.toString(),
+            name: createdUser.name || createdUser.username // Assuming 'name' or 'username' exists for the token payload
+        }
+        const token = jwt.sign(userData, "sagar@1997", {expiresIn: "1h"}) // Increased expiry to 1 hour
+        res.status(200).json({token})
     }
     catch(e){
         console.log(e)

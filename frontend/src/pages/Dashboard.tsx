@@ -69,6 +69,10 @@ export default function Dashboard() {
         setLoading(false);
         return;
       }
+      console.log("Dashboard Token:", token);
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      const userId = payload.id;
+      console.log("Dashboard Decoded userId:", userId);
       let url = "http://localhost:8888/expenses";
       if (params && params.from && params.to && params.categoryId) {
         url = `http://localhost:8888/expenses/${params.from}/${params.to}/${params.categoryId}`;
@@ -147,9 +151,10 @@ export default function Dashboard() {
           <svg className="text-primary" width="32" height="32" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="currentColor" fillOpacity="0.1"/><path d="M7 10.5V9.75C7 8.50736 8.00736 7.5 9.25 7.5H14.75C15.9926 7.5 17 8.50736 17 9.75V10.5M7 10.5H17M7 10.5V14.25C7 15.4926 8.00736 16.5 9.25 16.5H14.75C15.9926 16.5 17 15.4926 17 14.25V10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
           Expense Tracker
         </h1>
-        <div className="flex gap-3">
+        <div className="flex gap-4">
           <Button onClick={() => navigate("/add-expense")}>Add Expense</Button>
           <Button variant="outline" onClick={handleLogout}>Logout</Button>
+          <Button variant="outline" onClick={() => navigate("/manage-categories")}>Manage Categories</Button>
         </div>
       </header>
 

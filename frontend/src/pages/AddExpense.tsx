@@ -4,7 +4,14 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ChevronLeft } from "lucide-react"; // Import for back button icon
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+import { ChevronLeft } from "lucide-react";
 
 interface Category {
   _id: string;
@@ -14,7 +21,7 @@ interface Category {
 export default function AddExpense() {
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
-  const [categoryTitle, setCategoryTitle] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState(""); // Changed from categoryTitle
   const [date, setDate] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,9 +39,10 @@ export default function AddExpense() {
           setLoading(false);
           return;
         }
-        // Decode userId from token (assuming JWT)
-        const payload = JSON.parse(atob(token.split("." )[1]));
+        console.log("Token:", token);
+        const payload = JSON.parse(atob(token.split(".")[1]));
         const userId = payload.id;
+        console.log("Decoded userId:", userId);
         const res = await fetch(`http://localhost:8888/categories/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -45,6 +53,9 @@ export default function AddExpense() {
         }
         const data = await res.json();
         setCategories(data);
+        if (data.length > 0) {
+          setSelectedCategoryId(data[0]._id); // Set default selected category
+        }
       } catch (e: any) {
         setError(e.message || "Error fetching categories");
       } finally {
@@ -72,7 +83,7 @@ export default function AddExpense() {
         body: JSON.stringify({
           description,
           amount: Number(amount),
-          categoryTitle,
+          categoryId: selectedCategoryId, // Changed from categoryTitle
           date,
         }),
       });
@@ -98,7 +109,7 @@ export default function AddExpense() {
             <ChevronLeft className="h-6 w-6" />
           </Button>
           <CardTitle className="text-3xl font-bold text-center flex-grow">Add New Expense</CardTitle>
-          <div className="w-10"></div> {/* Placeholder to balance title */}
+          <div className="w-10"></div>
         </CardHeader>
         <CardContent>
           {loading && <p className="text-muted-foreground text-center py-8">Loading categories...</p>}
@@ -131,20 +142,16 @@ export default function AddExpense() {
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="category" className="font-semibold">Category</Label>
-                <Input
-                  id="category"
-                  list="categories-list"
-                  value={categoryTitle}
-                  onChange={e => setCategoryTitle(e.target.value)}
-                  required
-                  placeholder="Type or select a category"
-                  className="focus:ring-2 focus:ring-primary h-11 text-base"
-                />
-                <datalist id="categories-list">
-                  {categories.map(cat => (
-                    <option key={cat._id} value={cat.title} />
-                  ))}
-                </datalist>
+                <Select value={selectedCategoryId} onValueChange={setSelectedCategoryId}>
+                  <SelectTrigger id="category" className="w-full h-11 text-base">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map(cat => (
+                      <SelectItem key={cat._id} value={cat._id}>{cat.title}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="date" className="font-semibold">Date</Label>

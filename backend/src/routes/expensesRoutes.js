@@ -15,16 +15,15 @@ expenses.get("/", authMiddleware, async (req, res)=>{
 
 expenses.post("/", authMiddleware, async (req, res)=>{
     try {
-        const { description, amount, date, categoryTitle } = req.body;
+        const { description, amount, date, categoryId } = req.body; // Changed from categoryTitle
         const { id: userId } = req.tokenData;
-        if (!categoryTitle) {
-            return res.status(400).json({ message: "Category title is required." });
+        if (!categoryId) {
+            return res.status(400).json({ message: "Category ID is required." }); // Changed message
         }
         // Check if category exists for this user
-        let category = await categoriesModel.findOne({ title: categoryTitle, userId });
+        let category = await categoriesModel.findOne({ _id: categoryId, userId }); // Changed to _id
         if (!category) {
-            // Create new category
-            category = await categoriesModel.create({ title: categoryTitle, userId });
+            return res.status(404).json({ message: "Category not found." }); // If category doesn't exist, return error
         }
         // Create the expense
         await expensesModel.create({

@@ -14,6 +14,7 @@ const authMiddleware = (req, res, next)=>{
         next()
     }
     catch(e){
+        console.log("Auth Middleware Error:", e);
         res.status(400).send("Unauthorized")
     }
     
