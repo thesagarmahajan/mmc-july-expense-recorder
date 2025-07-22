@@ -10,14 +10,24 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
 export function Signup() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [name, setName] = useState("")
+    const [error, setError] = useState<string | null>(null);
 
     const navigate = useNavigate()
+
+    // Add useEffect to check for token on component mount
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            navigate("/dashboard");
+        }
+    }, [navigate]); // navigate should be in dependency array
 
     function handleSignInRedirect() {
         navigate("/signin");
@@ -25,6 +35,7 @@ export function Signup() {
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault(); // prevent page reload
+        setError(null); // Clear previous errors
 
         try {
             const response = await fetch("http://localhost:8888/users/", {
@@ -32,11 +43,17 @@ export function Signup() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ name, email, password }),
             });
 
             if (!response.ok) {
-                throw new Error(`Server error: ${response.status}`);
+                const errorData = await response.json();
+                if (errorData.errors && errorData.errors.name) {
+                    setError(errorData.errors.name);
+                } else {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                return; // Stop execution if there's a server error
             }
 
             const data = await response.json();
@@ -46,7 +63,8 @@ export function Signup() {
             // Redirect to dashboard page or show success message
             navigate("/dashboard");
         } catch (err) {
-            // You could show an error toast or message here
+            console.error("Signup error:", err);
+            setError("An unexpected error occurred. Please try again.");
         }
     }
 
@@ -66,6 +84,17 @@ export function Signup() {
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="grid gap-2">
+                            <Label htmlFor="name">Name</Label>
+                            <Input
+                                id="name"
+                                type="text"
+                                placeholder="John Doe"
+                                required
+                                onChange={(e) => setName(e.target.value)}
+                                className="focus:ring-2 focus:ring-primary"
+                            />
+                        </div>
                         <div className="grid gap-2">
                             <Label htmlFor="email">Email</Label>
                             <Input
@@ -87,6 +116,7 @@ export function Signup() {
                                 className="focus:ring-2 focus:ring-primary"
                             />
                         </div>
+                        {error && <p className="text-red-500 text-sm">{error}</p>}
                         <CardFooter className="flex-col gap-2 mt-4 p-0">
                             <Button type="submit" className="w-full">
                                 Sign Up

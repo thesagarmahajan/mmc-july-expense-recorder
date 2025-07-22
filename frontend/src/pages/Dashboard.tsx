@@ -42,7 +42,10 @@ export default function Dashboard() {
     const fetchCategories = async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) return;
+        if (!token) {
+          navigate("/signin"); // Redirect to signin/signup
+          return;
+        }
         const payload = JSON.parse(atob(token.split(".")[1]));
         const userId = payload.id;
         const res = await fetch(`http://localhost:8888/categories/${userId}`, {
@@ -67,12 +70,9 @@ export default function Dashboard() {
       if (!token) {
         setError("No token found. Please sign in.");
         setLoading(false);
+        navigate("/signin"); // Redirect to signin/signup
         return;
       }
-      console.log("Dashboard Token:", token);
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      const userId = payload.id;
-      console.log("Dashboard Decoded userId:", userId);
       let url = "http://localhost:8888/expenses";
       if (params && params.from && params.to && params.categoryId) {
         url = `http://localhost:8888/expenses/${params.from}/${params.to}/${params.categoryId}`;

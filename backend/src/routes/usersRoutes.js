@@ -36,7 +36,14 @@ users.post("/", async (req, res)=>{
     }
     catch(e){
         console.log(e)
-        res.send("Some error")
+        if (e.name === 'ValidationError') {
+            const errors = {};
+            for (const field in e.errors) {
+                errors[field] = e.errors[field].message;
+            }
+            return res.status(400).json({ message: 'Validation failed', errors });
+        }
+        res.status(500).send("Some error occurred");
     }
 })
 
