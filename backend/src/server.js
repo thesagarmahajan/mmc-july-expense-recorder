@@ -11,7 +11,7 @@ const PORT = 8888
 app.use(express.json())
 app.use(cors())
 
-mongoose.connect("mongodb://localhost:27017/expenseRecorder")
+mongoose.connect("mongodb+srv://sagar:Sagar%401997@cluster0.grptvsh.mongodb.net/expenseRecorder")
 .then((con)=>console.log("Connection Successful"))
 
 

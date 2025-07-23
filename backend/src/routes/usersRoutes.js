@@ -9,11 +9,12 @@ users.get("/", (req, res)=>{
 
 users.post("/login", async (req, res)=>{
     const {email, password} = req.body
+    console.log({email, password})
     const foundUser = await usersModel.find({email, password}, {password: 0, email: 0})
     if(foundUser.length==0){
         res.status(404).send()
     }
-
+    
     const userData = {
         id: foundUser[0]._id.toString(),
         name: foundUser[0].name

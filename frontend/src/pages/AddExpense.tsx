@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {categoriesUrl, expensesUrl} from "../globals"
 import {
   Select,
   SelectTrigger,
@@ -43,7 +44,7 @@ export default function AddExpense() {
         const payload = JSON.parse(atob(token.split(".")[1]));
         const userId = payload.id;
         console.log("Decoded userId:", userId);
-        const res = await fetch(`http://localhost:8888/categories/${userId}`, {
+        const res = await fetch(`${categoriesUrl}/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -74,7 +75,7 @@ export default function AddExpense() {
         setError("No token found. Please sign in.");
         return;
       }
-      const res = await fetch("http://localhost:8888/expenses", {
+      const res = await fetch(expensesUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

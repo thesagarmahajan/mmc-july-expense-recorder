@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { authUrl } from "@/globals"
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
@@ -38,7 +39,7 @@ export function Signup() {
         setError(null); // Clear previous errors
 
         try {
-            const response = await fetch("http://localhost:8888/users/", {
+            const response = await fetch(authUrl, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

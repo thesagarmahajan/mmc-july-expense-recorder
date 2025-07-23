@@ -11,6 +11,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import { categoriesUrl, expensesUrl } from "@/globals";
 
 interface Expense {
   _id: string;
@@ -48,7 +49,7 @@ export default function Dashboard() {
         }
         const payload = JSON.parse(atob(token.split(".")[1]));
         const userId = payload.id;
-        const res = await fetch(`http://localhost:8888/categories/${userId}`, {
+        const res = await fetch(`${categoriesUrl}/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch categories");
@@ -73,9 +74,9 @@ export default function Dashboard() {
         navigate("/signin"); // Redirect to signin/signup
         return;
       }
-      let url = "http://localhost:8888/expenses";
+      let url = expensesUrl;
       if (params && params.from && params.to && params.categoryId) {
-        url = `http://localhost:8888/expenses/${params.from}/${params.to}/${params.categoryId}`;
+        url = `${expensesUrl}/${params.from}/${params.to}/${params.categoryId}`;
       }
       const res = await fetch(url, {
         headers: {
@@ -118,7 +119,7 @@ export default function Dashboard() {
         setError("No token found. Please sign in.");
         return;
       }
-      const res = await fetch(`http://localhost:8888/expenses/${expenseId}`, {
+      const res = await fetch(`${expensesUrl}/${expenseId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

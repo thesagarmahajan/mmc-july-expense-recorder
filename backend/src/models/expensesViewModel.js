@@ -21,5 +21,5 @@ const expensesViewSchema = new mongoose.Schema({
     }
 })
 
-const expensesViewModel = mongoose.model("categoriesAndExpensesView", expensesViewSchema, "categoriesAndExpensesView")
+const expensesViewModel = mongoose.model("expensesViewModel", expensesViewSchema, "expensesViewModel")
 module.exports = expensesViewModel

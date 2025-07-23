@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ChevronLeft } from "lucide-react";
+import { categoriesUrl } from "@/globals";
 
 interface Category {
   _id: string;
@@ -36,7 +37,7 @@ export default function ManageCategories() {
       const payload = JSON.parse(atob(token.split(".")[1]));
       const userId = payload.id;
       console.log("Decoded userId:", userId);
-      const res = await fetch(`http://localhost:8888/categories/${userId}`, {
+      const res = await fetch(`${categoriesUrl}/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -67,7 +68,7 @@ export default function ManageCategories() {
       }
       const payload = JSON.parse(atob(token.split(".")[1]));
       const userId = payload.id;
-      const res = await fetch("http://localhost:8888/categories", {
+      const res = await fetch(`${categoriesUrl}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -94,7 +95,7 @@ export default function ManageCategories() {
         setError("No token found. Please sign in.");
         return;
       }
-      const res = await fetch(`http://localhost:8888/categories/${categoryId}`, {
+      const res = await fetch(`${categoriesUrl}/${categoryId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
